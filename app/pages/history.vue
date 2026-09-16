@@ -3,6 +3,7 @@ import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useTracking } from '~/composables/useTracking';
 import TrackingStatusBadge from '~/components/TrackingStatusBadge.vue';
+import type { StandardPackageStatus } from '~~/types/tracking';
 
 const router = useRouter();
 const { searchHistory, initHistory, trackPackage, clearHistory } = useTracking();
@@ -14,6 +15,18 @@ onMounted(() => {
 const selectAndTrack = (code: string) => {
   trackPackage(code);
   router.push('/');
+};
+
+const getStatusLabel = (status: StandardPackageStatus): string => {
+  const map: Record<StandardPackageStatus, string> = {
+    PREPARING: 'Hazırlanıyor',
+    IN_TRANSIT: 'Yolda',
+    AT_HUB: 'Dağıtım Merkezinde',
+    OUT_FOR_DELIVERY: 'Dağıtımda',
+    DELIVERED: 'Teslim Edildi',
+    EXCEPTION: 'Sorun Oluştu',
+  };
+  return map[status] || status;
 };
 
 const formatDate = (isoString: string) => {
@@ -35,8 +48,8 @@ const formatDate = (isoString: string) => {
   <div class="container py-5">
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
       <div>
-        <h1 class="display-6 fw-bold mb-1">Arama Geçmişi</h1>
-        <p class="text-muted mb-0">Cihazınızda LocalStorage üzerinde saklanan son kargo sorgularınız.</p>
+        <h1 class="display-6 fw-bold mb-1 text-themed">Arama Geçmişi</h1>
+        <p class="text-secondary mb-0">Cihazınızda LocalStorage üzerinde saklanan son kargo sorgularınız.</p>
       </div>
       <button 
         v-if="searchHistory && searchHistory.length > 0" 
@@ -48,38 +61,47 @@ const formatDate = (isoString: string) => {
     </div>
 
     <!-- Boş Durum -->
-    <div v-if="!searchHistory || searchHistory.length === 0" class="card border-0 shadow-sm rounded-4 p-5 text-center bg-white">
+    <div v-if="!searchHistory || searchHistory.length === 0" class="theme-card p-5 text-center">
       <i class="bi bi-clock-history fs-1 text-muted opacity-50 mb-3"></i>
       <h4 class="fw-bold">Geçmiş Bulunamadı</h4>
-      <p class="text-muted mb-4">Henüz bir kargo sorgulamadınız.</p>
+      <p class="text-secondary mb-4">Henüz bir kargo sorgulamadınız.</p>
       <NuxtLink to="/" class="btn btn-primary rounded-pill px-4 mx-auto">
         Kargo Sorgulamaya Başla
       </NuxtLink>
     </div>
 
     <!-- Geçmiş Listesi Tablosu -->
-    <div v-else class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+    <div v-else class="theme-card overflow-hidden">
       <div class="table-responsive">
         <table class="table table-hover align-middle mb-0">
-          <thead class="table-light">
-            <tr>
-              <th class="ps-4">Takip Numarası</th>
-              <th>Kargo Firması</th>
-              <th>Son Bilinen Durum</th>
-              <th>Sorgulanma Tarihi</th>
-              <th class="text-end pe-4">İşlem</th>
+          <thead>
+            <tr class="border-bottom" style="border-color: var(--border-color) !important;">
+              <th class="ps-4 py-3 text-secondary">Takip Numarası</th>
+              <th class="py-3 text-secondary">Kargo Firması</th>
+              <th class="py-3 text-secondary">Son Bilinen Durum</th>
+              <th class="py-3 text-secondary">Sorgulanma Tarihi</th>
+              <th class="text-end pe-4 py-3 text-secondary">İşlem</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="item in searchHistory" :key="item.trackingNumber">
+            <tr 
+              v-for="item in searchHistory" 
+              :key="item.trackingNumber"
+              class="border-bottom"
+              style="border-color: var(--border-color) !important;"
+            >
               <td class="ps-4">
                 <span class="fw-bold font-monospace text-primary fs-6">{{ item.trackingNumber }}</span>
               </td>
-              <td class="fw-semibold text-secondary">{{ item.carrierName }}</td>
+              <td class="fw-semibold">{{ item.carrierName }}</td>
               <td>
-                <TrackingStatusBadge :status="item.lastKnownStatus" :status-text="item.lastKnownStatus" />
+                <!-- getStatusLabel ile Türkçeleştirilmiş metin gönderilir -->
+                <TrackingStatusBadge 
+                  :status="item.lastKnownStatus" 
+                  :status-text="getStatusLabel(item.lastKnownStatus)" 
+                />
               </td>
-              <td class="text-muted small">{{ formatDate(item.searchedAt) }}</td>
+              <td class="text-secondary small">{{ formatDate(item.searchedAt) }}</td>
               <td class="text-end pe-4">
                 <button 
                   class="btn btn-sm btn-outline-primary rounded-pill px-3"
@@ -95,3 +117,11 @@ const formatDate = (isoString: string) => {
     </div>
   </div>
 </template>
+
+<style scoped>
+.table {
+  color: var(--text-main);
+  --bs-table-bg: transparent;
+  --bs-table-hover-bg: rgba(59, 130, 246, 0.05);
+}
+</style>

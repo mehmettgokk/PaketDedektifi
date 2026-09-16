@@ -45,7 +45,7 @@ const carriers = [
     name: 'AfterShip Tracking API',
     code: 'CANLI_TAKIP_NO',
     badge: 'Canlı Entegrasyon',
-    badgeClass: 'bg-dark',
+    badgeClass: 'bg-secondary',
     format: 'Resmi REST API v4/v5 Şeması (checkpoints, slug, subtag_message)',
     icon: 'bi-globe-americas',
     location: 'Dünya Geneli (1000+ Kurye)',
@@ -61,33 +61,33 @@ const carriers = [
       <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2 fw-semibold mb-2">
         Test & Entegrasyon Rehberi
       </span>
-      <h1 class="display-6 fw-bold">Desteklenen Kargo Firmaları</h1>
-      <p class="text-muted mx-auto" style="max-width: 600px;">
+      <h1 class="display-6 fw-bold text-themed">Desteklenen Kargo Firmaları</h1>
+      <p class="text-secondary mx-auto" style="max-width: 600px;">
         Aşağıdaki kargo firmaları birbirinden tamamen farklı API modellerine sahiptir. Paket Dedektifi bu verileri ortak bir yapıda birleştirir.
       </p>
     </div>
 
-    <!-- Firma Kartları Izgarası -->
+    <!-- Firma Kartları -->
     <div class="row g-4">
       <div v-for="carrier in carriers" :key="carrier.name" class="col-md-6">
-        <div class="card h-100 border-0 shadow-sm rounded-4 p-4 bg-white d-flex flex-column justify-content-between">
+        <div class="theme-card h-100 p-4 d-flex flex-column justify-content-between">
           <div>
             <div class="d-flex justify-content-between align-items-center mb-3">
               <span :class="['badge rounded-pill px-3 py-1', carrier.badgeClass]">{{ carrier.badge }}</span>
               <i :class="['bi fs-3 text-primary', carrier.icon]"></i>
             </div>
-            <h4 class="fw-bold mb-2">{{ carrier.name }}</h4>
-            <p class="text-muted small mb-3">{{ carrier.description }}</p>
+            <h4 class="fw-bold mb-2 text-themed">{{ carrier.name }}</h4>
+            <p class="text-secondary small mb-3">{{ carrier.description }}</p>
 
-            <div class="bg-light p-3 rounded-3 mb-3 small">
+            <div class="theme-sub-card p-3 rounded-3 mb-3 small">
               <div class="text-secondary fw-semibold mb-1">API Yanıt Formatı:</div>
-              <code class="text-dark">{{ carrier.format }}</code>
+              <code class="text-primary">{{ carrier.format }}</code>
             </div>
           </div>
 
-          <div class="pt-3 border-top d-flex justify-content-between align-items-center">
+          <div class="pt-3 border-top d-flex justify-content-between align-items-center" style="border-color: var(--border-color) !important;">
             <div>
-              <small class="text-muted d-block">Örnek Test No:</small>
+              <small class="text-secondary d-block">Örnek Test No:</small>
               <span class="fw-bold font-monospace text-primary fs-6">{{ carrier.code }}</span>
             </div>
             <button 

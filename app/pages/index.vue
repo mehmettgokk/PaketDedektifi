@@ -28,7 +28,6 @@ const setCode = (code: string) => {
   trackPackage(code);
 };
 
-// Rastgele test numarası seçici 
 const testCodes = ['FAST123456', 'GLO987654', 'TR555888'];
 const pickRandomCode = () => {
   const random = testCodes[Math.floor(Math.random() * testCodes.length)];
@@ -54,31 +53,30 @@ const formatDate = (isoString: string) => {
   <div>
     <!-- Hero Bölümü -->
     <section class="hero-section py-5 text-center text-white position-relative">
-      <div class="container py-lg-4 position-relative" style="z-index: 2;">
-        <span class="badge bg-white text-primary px-3 py-2 rounded-pill fw-semibold mb-3 shadow-sm">
+      <div class="container py-lg-3 position-relative" style="z-index: 2;">
+        <span class="badge bg-white bg-opacity-20 text-white px-3 py-2 rounded-pill fw-semibold mb-3 border border-white border-opacity-25 shadow-sm">
           🚀 Çoklu Kargo Normalizer Motoru Aktif
         </span>
         <h1 class="display-5 fw-bold mb-3">Paketinizin Yolculuğunu Canlı İzleyin</h1>
         <p class="lead opacity-90 mx-auto mb-4" style="max-width: 650px;">
-          Farklı formatlardaki kargo verilerini tek çatı altında toplayan akıllı dedektifiniz.
+          Farklı kargo servislerinden gelen verileri tek bir standart arayüzde birleştiren akıllı dedektifiniz.
         </p>
 
-        <!-- Arama Kutusu Kartı -->
-        <div class="search-card-container mx-auto" style="max-width: 680px;">
-          <form @submit.prevent="handleSearch" class="search-form bg-white p-2 rounded-4 shadow-lg d-flex align-items-center gap-2">
+        <!-- Arama Kutusu -->
+        <div class="search-container mx-auto" style="max-width: 680px;">
+          <form @submit.prevent="handleSearch" class="search-box p-2 rounded-4 d-flex align-items-center gap-2 shadow-lg">
             <i class="bi bi-upc-scan fs-4 text-primary ms-3"></i>
             <input 
               v-model="inputCode" 
               type="text" 
-              class="form-control border-0 shadow-none fs-5 py-2" 
+              class="form-control border-0 shadow-none fs-5 py-2 search-input" 
               placeholder="Takip numarasını girin..." 
               :disabled="isLoading"
               required 
             />
-            <!-- Rastgele Numara Butonu -->
             <button 
               type="button" 
-              class="btn btn-light rounded-3 text-secondary d-none d-sm-inline-flex align-items-center gap-1"
+              class="btn btn-secondary bg-opacity-25 border-0 rounded-3 text-white d-none d-sm-inline-flex align-items-center gap-1 px-3"
               title="Rastgele Kargo Numarası Dene"
               @click="pickRandomCode"
             >
@@ -113,29 +111,29 @@ const formatDate = (isoString: string) => {
       </div>
     </section>
 
-    <!-- Kargo Sonuç Paneli -->
+    <!-- Kargo Sonuç Alanı -->
     <section class="container py-5" style="margin-top: -30px; position: relative; z-index: 3;">
       <div class="row justify-content-center">
         <div class="col-lg-10">
-          <!-- Hata Uyarısı -->
+          <!-- Hata Durumu -->
           <div v-if="errorMessage" class="alert alert-danger border-0 shadow-sm rounded-4 p-4 d-flex align-items-center gap-3">
             <i class="bi bi-exclamation-octagon-fill fs-2 text-danger"></i>
             <div>
               <h5 class="fw-bold mb-1">Kargo Bulunamadı</h5>
-              <p class="mb-0 text-muted">{{ errorMessage }}</p>
+              <p class="mb-0">{{ errorMessage }}</p>
             </div>
           </div>
 
-          <!-- Yükleniyor Durumu -->
-          <div v-if="isLoading" class="modern-card p-5 text-center">
+          <!-- Yüklenme Göstergesi -->
+          <div v-if="isLoading" class="theme-card p-5 text-center">
             <div class="spinner-grow text-primary mb-3" style="width: 3rem; height: 3rem;" role="status"></div>
-            <h5 class="fw-bold text-dark">Kargo Ağları Taranıyor...</h5>
-            <p class="text-muted mb-0">Mock veritabanları ve AfterShip uç noktaları normalize ediliyor.</p>
+            <h5 class="fw-bold">Kargo Ağları Taranıyor...</h5>
+            <p class="text-secondary mb-0">Mock veritabanları ve AfterShip uç noktaları normalize ediliyor.</p>
           </div>
 
           <!-- Kargo Başarılı Sonucu -->
-          <div v-else-if="trackingData" class="modern-card overflow-hidden">
-            <!-- Üst Kurumsal Bilgi Başlığı -->
+          <div v-else-if="trackingData" class="theme-card overflow-hidden">
+            <!-- Kart Başlığı -->
             <div class="card-hero-header p-4 p-md-5 text-white">
               <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
                 <div>
@@ -150,7 +148,7 @@ const formatDate = (isoString: string) => {
                 />
               </div>
 
-              <!-- İki Kolonlu Lokasyon & Saat Kutusu -->
+              <!-- Konum & Saat Kutuları -->
               <div class="row g-3">
                 <div class="col-sm-6">
                   <div class="info-glass-box p-3 rounded-3 d-flex align-items-center gap-3">
@@ -177,18 +175,18 @@ const formatDate = (isoString: string) => {
               </div>
             </div>
 
-            <!-- Dikey Zaman Çizelgesi -->
-            <div class="p-4 p-md-5 bg-white">
+            <!-- Zaman Çizelgesi -->
+            <div class="p-4 p-md-5">
               <TrackingTimeline :events="trackingData.events" />
             </div>
           </div>
 
-          <!-- İlk Ziyaret / Boş Karşılama Kartı -->
-          <div v-else class="modern-card p-5 text-center text-muted">
+          <!-- İlk Ziyaret / Boş Karşılama -->
+          <div v-else class="theme-card p-5 text-center">
             <div class="empty-icon-circle mx-auto mb-3">
               <i class="bi bi-box-seam fs-1 text-primary"></i>
             </div>
-            <h4 class="fw-bold text-dark">Henüz Bir Takip Numarası Girmediniz</h4>
+            <h4 class="fw-bold">Henüz Bir Takip Numarası Girmediniz</h4>
             <p class="text-secondary mx-auto mb-4" style="max-width: 480px;">
               Yukarıdaki arama çubuğuna takip numaranızı girin veya hızlı test butonlarına tıklayarak sistemin kargo verilerini nasıl normalize ettiğini izleyin.
             </p>
@@ -204,12 +202,23 @@ const formatDate = (isoString: string) => {
 
 <style scoped>
 .hero-section {
-  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #3b82f6 100%);
+  background: linear-gradient(135deg, #0f2b6e 0%, #1d4ed8 50%, #2563eb 100%);
   padding-bottom: 60px;
 }
 
-.search-form {
-  border: 1px solid rgba(255, 255, 255, 0.4);
+.search-box {
+  background: var(--input-bg);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  transition: background-color 0.3s ease;
+}
+
+.search-input {
+  background: transparent !important;
+  color: var(--text-main) !important;
+}
+
+.search-input::placeholder {
+  color: var(--text-muted);
 }
 
 .test-pill {
@@ -224,13 +233,6 @@ const formatDate = (isoString: string) => {
 .test-pill:hover {
   background: white;
   color: #1e3a8a;
-}
-
-.modern-card {
-  background: white;
-  border-radius: 24px;
-  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.07);
-  border: 1px solid #e2e8f0;
 }
 
 .card-hero-header {
@@ -255,7 +257,7 @@ const formatDate = (isoString: string) => {
   width: 72px;
   height: 72px;
   border-radius: 50%;
-  background: #eff6ff;
+  background: rgba(59, 130, 246, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
